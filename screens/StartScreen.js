@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Button, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, Text, StyleSheet, Button, TouchableWithoutFeedback, Keyboard, Alert } from 'react-native';
 
 import Card from '../components/Card';
 import Input from '../components/Input';
@@ -7,12 +7,39 @@ import Colors from '../constants/colors';
 
 const StartScreen = (props) => {
    
-    const [value, setValue] = useState('');
+    const [enteredValue, setEnteredValue] = useState('');
+    const [confirmGame, setConfirmGame] = useState(false);
+    const [selectedNumber, setSelectedNumber] = useState(); 
     
     const validateInput = (text) => {
         // drops any non-numerical values
-        setValue(text.replace(/[^0-9]/g, ''));
+        setEnteredValue(text.replace(/[^0-9]/g, ''));
     }
+
+    const resetInput = () => {
+        setEnteredValue('');
+        setConfirmGame(false);
+    };
+
+    const confirmInputHandler = () => {
+        const selectedNumber = parseInt(enteredValue);
+        //if (typeof(selectedNumber) !== 'number' || selectedNumber <= 0)
+        if (isNaN(selectedNumber) || selectedNumber <= 0 || selectedNumber > 99) {
+            Alert.alert(
+                'Invalid number:', 
+                'Number must be between 1 and 99.', 
+                [{text: 'Okay', style: 'destructive', onPress: resetInput}]
+            );
+            return; //add appropriate msg feedback to user
+        }
+        setConfirmGame(true);
+        setSelectedNumber(selectedNumber);
+        setEnteredValue('');
+    };
+
+    let confirmedOutput = confirmGame 
+        ? <Text>Chosen Number: {selectedNumber}</Text>
+        : '';
 
 return(
     <TouchableWithoutFeedback onPress={() => {
@@ -28,17 +55,18 @@ return(
                     keyboardType="number-pad" 
                     maxLength={2} 
                     onChangeText={validateInput}
-                    value={value}
+                    value={enteredValue}
                 />
                 <View style={styles.buttonContainer}>
                     <View style={styles.button}>
-                        <Button color={Colors.accent} title="Reset" onPress={() => {}} />
+                        <Button color={Colors.accent} title="Reset" onPress={resetInput} />
                     </View>
                     <View style={styles.button}>
-                        <Button color={Colors.primary} title="Confirm" onPress={() => {}} />
+                        <Button color={Colors.primary} title="Confirm" onPress={confirmInputHandler} />
                     </View>
                 </View>
             </Card>
+            <Text style={styles.userFeedback}>{confirmedOutput}</Text>
         </View>
     </TouchableWithoutFeedback>
 )
@@ -72,6 +100,9 @@ const styles = StyleSheet.create({
    input: {
        width: 60,
        textAlign: 'center'
+   },
+   userFeedback: {
+       margin: 15
    }
 });
 
