@@ -30,7 +30,9 @@ export default function App() {
                     onGameOver={gameOverHandler}
                     /> 
     } else if ( gameOver) {
-        content = <GameOverScreen />;
+        content = <GameOverScreen rounds={rounds} 
+                    userNumber={userNumber}  
+                    restart={startGame} />;     //argument = null
     }
 
 

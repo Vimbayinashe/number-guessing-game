@@ -5,10 +5,9 @@ import Card from '../components/Card';
 
 const GameScreen = (props) => {
    
-    console.log(props);
     const [currentGuess, setCurrentGuess] = useState(generateRandomNumber(1, 100, props.userChoice));
 
-    const [rounds, setRounds] = useState();
+    const [rounds, setRounds] = useState(0);
     const currentMin = useRef(1);
     const currentMax = useRef(100);
 
