@@ -1,8 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, Alert } from 'react-native';
+import { View, Text, StyleSheet, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 import NumberContainer from '../components/NumberContainer';
 import Card from '../components/Card';
+import MainButton from '../components/MainButton';
+
 import DefaultStyles from '../constants/default-styles';
 
 
@@ -57,8 +60,12 @@ const GameScreen = (props) => {
             <NumberContainer>{currentGuess}</NumberContainer>
             <Card style={styles.buttonContainer}>
                 {/* <Button title="Smaller" onPress={nextGuess.bind(this, 'lower')} /> */}
-                <Button title="Smaller" onPress={() => nextGuess('smaller')} />
-                <Button title="Greater" onPress={() => nextGuess('greater')} />
+                <MainButton onPress={() => nextGuess('smaller')}>
+                    <Ionicons name="md-remove" size={24} color="white"/>
+                </MainButton>
+                <MainButton onPress={() => nextGuess('greater')}>
+                    <Ionicons name="md-add" size={24} color="white"/>
+                </MainButton>
             </Card>
         </View>
     )
@@ -74,8 +81,8 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       justifyContent: 'space-around',
       marginTop: 20,
-      width: 300,
-      maxWidth: '80%' 
+      width: 400,
+      maxWidth: '90%' 
    }
 });
 
