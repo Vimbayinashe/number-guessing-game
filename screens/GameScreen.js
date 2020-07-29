@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import { View, Text, StyleSheet, Alert, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import NumberContainer from '../components/NumberContainer';
@@ -11,9 +11,11 @@ import DefaultStyles from '../constants/default-styles';
 
 const GameScreen = (props) => {
    
-    const [currentGuess, setCurrentGuess] = useState(generateRandomNumber(1, 100, props.userChoice));
+    const initialGuess = generateRandomNumber(1, 100, props.userChoice);
+    const [currentGuess, setCurrentGuess] = useState(initialGuess);
 
-    const [rounds, setRounds] = useState(0);
+    const [rounds, setRounds] = useState(0);    /** remove */
+    const [pastGuesses, setPastGuesses] = useState([initialGuess]);
     const currentMin = useRef(1);
     const currentMax = useRef(100);
 
@@ -24,6 +26,7 @@ const GameScreen = (props) => {
     useEffect(() => {
         if (currentGuess === props.userChoice) {
             props.onGameOver(rounds);
+            // props.onGameOver(pastGuesses.length);    //alternative
         }
     }, [currentGuess, userChoice, onGameOver, rounds]);
     // }, [currentGuess, props.userChoice, props.onGameOver, props.rounds]);    
@@ -45,12 +48,14 @@ const GameScreen = (props) => {
         if (comparison === "smaller") {
             currentMax.current = currentGuess;
         } else {
-            currentMin.current = currentGuess;
+            currentMin.current = currentGuess + 1;
         }
 
         const nextNumber = generateRandomNumber(currentMin.current, currentMax.current, currentGuess);
         setCurrentGuess(nextNumber);
-        setRounds(curRounds => curRounds + 1);
+        setRounds(curRounds => curRounds + 1);  /** remove */
+        setPastGuesses(curPastGuesses => [nextNumber, ...curPastGuesses])
+
     }
 
 
@@ -67,6 +72,14 @@ const GameScreen = (props) => {
                     <Ionicons name="md-add" size={24} color="white"/>
                 </MainButton>
             </Card>
+
+            <ScrollView>
+                {pastGuesses.map(guess => (
+                    <View key={guess} >
+                        <Text>{guess}</Text>
+                    </View>
+                ))}
+            </ScrollView>
         </View>
     )
 };
