@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, Alert, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Alert, ScrollView, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import NumberContainer from '../components/NumberContainer';
@@ -16,7 +16,7 @@ const GameScreen = (props) => {
     const [currentGuess, setCurrentGuess] = useState(initialGuess);
 
     const [rounds, setRounds] = useState(0);    /** remove */
-    const [pastGuesses, setPastGuesses] = useState([initialGuess]);
+    const [pastGuesses, setPastGuesses] = useState([initialGuess.toString()]);
     const currentMin = useRef(1);
     const currentMax = useRef(100);
 
@@ -55,7 +55,7 @@ const GameScreen = (props) => {
         const nextNumber = generateRandomNumber(currentMin.current, currentMax.current, currentGuess);
         setCurrentGuess(nextNumber);
         setRounds(curRounds => curRounds + 1);  /** remove */
-        setPastGuesses(curPastGuesses => [nextNumber, ...curPastGuesses])
+        setPastGuesses(curPastGuesses => [nextNumber.toString(), ...curPastGuesses])
 
     }
 
@@ -74,9 +74,16 @@ const GameScreen = (props) => {
                 </MainButton>
             </Card>
             <View style={styles.list}>
-                <ScrollView contentContainerStyle={styles.listContent}> 
+                {/* <ScrollView contentContainerStyle={styles.listContent}> 
                     {pastGuesses.map((guess, index) => renderListItem(guess, pastGuesses.length - index))}
-                </ScrollView>
+                </ScrollView> */}
+                
+                <FlatList data={pastGuesses}
+                    renderItem={itemData => (renderFlatListItem( pastGuesses.length, itemData))}
+                    // renderItem={renderFlatListItem.bind( this, pastGuesses.length)}  //reverse args in fxn (line 137)
+                    keyExtractor={(item) => item}
+                    contentContainerStyle={styles.listContent}
+                />
             </View>
         </View>
     )
@@ -135,5 +142,13 @@ const renderListItem = (value, numOfRound) => (
     <View key={value} style={styles.listItem} >
         <BodyText>#{numOfRound}</BodyText>
         <BodyText>{value}</BodyText>
+    </View>
+);
+
+
+const renderFlatListItem = (listLength, itemData) => (
+    <View style={styles.listItem} >
+        <BodyText>#{listLength - itemData.index}</BodyText>
+        <BodyText>{itemData.item}</BodyText>
     </View>
 );
