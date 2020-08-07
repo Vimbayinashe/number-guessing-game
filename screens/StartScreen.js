@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     View,
     Text,
@@ -25,7 +25,23 @@ const StartScreen = (props) => {
     const [enteredValue, setEnteredValue] = useState('');
     const [confirmGame, setConfirmGame] = useState(false);
     const [selectedNumber, setSelectedNumber] = useState(); 
+    const [buttonWidth, setButtonWidth] = useState(Dimensions.get('window').width / 4); 
+
+    // re-calculate window width when orientation changes
+    useEffect(() => {
+        const updateLayout = () => {
+            setButtonWidth(Dimensions.get('window').width / 4);
+        };
+
+        Dimensions.addEventListener('change', updateLayout);
+        
+        // cleans event listener
+        return () => {
+            Dimensions.removeEventListener('change', updateLayout);
+        }
+    });
     
+
     const validateInput = (text) => {
         // drops any non-numerical values
         setEnteredValue(text.replace(/[^0-9]/g, ''));
@@ -83,10 +99,10 @@ return(
                         value={enteredValue}
                     />
                     <View style={styles.buttonContainer}>
-                        <View style={styles.button}>
+                        <View style={{...styles.button, width: buttonWidth}}>
                             <Button color={Colors.accent} title="Reset" onPress={resetInput} />
                         </View>
-                        <View style={styles.button}>
+                        <View style={{...styles.button, width: buttonWidth}}>
                             <Button color={Colors.primary} title="Confirm" onPress={confirmInputHandler} />
                         </View>
                     </View>
@@ -126,7 +142,7 @@ const styles = StyleSheet.create({
    button: {
        borderRadius: 50,
     //    width: '40%',     //OR Dimensions API
-       width: Dimensions.get('window').width / 4,
+    //    width: Dimensions.get('window').width / 4,
    },
    input: {
        width: 60,

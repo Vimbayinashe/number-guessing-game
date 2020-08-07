@@ -21,7 +21,7 @@ const GameOverScreen = (props) => {
 
    
    return(
-    //    <ScrollView>
+      <ScrollView>
        <View style={styles.screen}>
            <TitleText>Game Over!</TitleText>
            <View style={styles.imageContainer}>
@@ -48,7 +48,7 @@ const GameOverScreen = (props) => {
             </MainButton>
            {/* <Button title="New Game" onPress={() => props.restart(null)} /> */}
        </View>
-    //    {/* </ScrollView> */} //if needed on smaller screens
+      </ScrollView> //if needed on smaller screens
    )
 };
 
@@ -56,7 +56,8 @@ const styles = StyleSheet.create({
    screen: {
        flex: 1,
        justifyContent: 'center',
-       alignItems: 'center'
+       alignItems: 'center',
+       paddingVertical: 10,
    },
    imageContainer: {
         width: Dimensions.get('window').width * 0.7,

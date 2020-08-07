@@ -20,6 +20,25 @@ const GameScreen = (props) => {
     const currentMin = useRef(1);
     const currentMax = useRef(100);
 
+    const [detectedHeight, setDetectedHeight] = useState(Dimensions.get('window').height); 
+    const [detectedWidth, setDetectedWidth] = useState(Dimensions.get('window').width); 
+
+    // re-calculate window height when orientation changes
+    useEffect(() => {
+        const updateLayout = () => {
+            setDetectedHeight(Dimensions.get('window').height);
+            setDetectedWidth(Dimensions.get('window').width);
+        };
+
+        Dimensions.addEventListener('change', updateLayout);
+        
+        // cleans event listener
+        return () => {
+            Dimensions.removeEventListener('change', updateLayout);
+        }
+    });
+
+
     // props deconstruction (of SOME props not all)
     const { userChoice, onGameOver } = props;
 
@@ -59,8 +78,33 @@ const GameScreen = (props) => {
 
     }
 
-    // Conditional styling
-    // let listContainerStyle = Dimensions.get('window').width > 500 ? styles.listContainer : styles.listContainerBig;
+    // Conditional styling  (replaced at line 115 styles.list)
+    // let listContainerStyle = detectedWidth > 500 ? styles.listContainer : styles.listContainerBig;
+
+
+    if (detectedHeight < 500) {
+        return(
+            <View style={styles.screen}>
+                <Text style={DefaultStyles.title}>Opponent's Guess</Text>
+                <View style={styles.landscape}>
+                    <MainButton onPress={() => nextGuess('smaller')}>
+                        <Ionicons name="md-remove" size={24} color="white"/>
+                    </MainButton>
+                    <NumberContainer>{currentGuess}</NumberContainer>
+                    <MainButton onPress={() => nextGuess('greater')}>
+                        <Ionicons name="md-add" size={24} color="white"/>
+                    </MainButton>
+                </View>
+                <View style={styles.list}>                
+                    <FlatList data={pastGuesses}
+                        renderItem={itemData => (renderFlatListItem( pastGuesses.length, itemData))}
+                        keyExtractor={(item) => item}
+                        contentContainerStyle={styles.listContent}
+                    />
+                </View>
+            </View>
+        )
+    }
 
 
     return(
@@ -123,6 +167,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         width: '60%',
+    },
+    landscape: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        width: '80%',
     },
 });
 
